@@ -207,7 +207,8 @@ func (p *CloudFlareProvider) submitChanges(changes []*cloudFlareChange) error {
 
 	for zoneID, changes := range changesByZone {
 		records, err := p.Client.DNSRecords(zoneID, cloudflare.DNSRecord{})
-		for _, rec := range records {
+		for i := range records {
+			rec := &records[i]
 			if ascii, err := idna.ToASCII(rec.ZoneName); err == nil {
 				rec.ZoneName = ascii
 			}
@@ -236,7 +237,6 @@ func (p *CloudFlareProvider) submitChanges(changes []*cloudFlareChange) error {
 			if uniconv, err := idna.ToUnicode(change.ResourceRecordSet.Name); err == nil {
 				change.ResourceRecordSet.Name = uniconv
 			}
-			log.WithFields(logFields).Infof("change type: %#v", change)
 			switch change.Action {
 			case cloudFlareCreate:
 				_, err := p.Client.CreateDNSRecord(zoneID, change.ResourceRecordSet)

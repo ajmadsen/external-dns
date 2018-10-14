@@ -21,11 +21,9 @@ import (
 	"os"
 	"testing"
 
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/kubernetes-incubator/external-dns/endpoint"
 	"github.com/kubernetes-incubator/external-dns/plan"
-
-	cloudflare "github.com/cloudflare/cloudflare-go"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -42,6 +40,11 @@ func (m *mockCloudFlareClient) DNSRecords(zoneID string, rr cloudflare.DNSRecord
 				{ID: "1234567890", Name: "foobar.ext-dns-test.zalando.to.", Type: endpoint.RecordTypeA, TTL: 120},
 				{ID: "1231231233", Name: "foo.bar.com", TTL: 1}},
 			nil
+	}
+	if zoneID == "1234567892" {
+		return []cloudflare.DNSRecord{
+			{ID: "1234567892", Name: "😡😡.ws.", Type: endpoint.RecordTypeA, TTL: 120},
+		}, nil
 	}
 	return nil, nil
 }
@@ -63,7 +66,7 @@ func (m *mockCloudFlareClient) ZoneIDByName(zoneName string) (string, error) {
 }
 
 func (m *mockCloudFlareClient) ListZones(zoneID ...string) ([]cloudflare.Zone, error) {
-	return []cloudflare.Zone{{ID: "1234567890", Name: "ext-dns-test.zalando.to."}, {ID: "1234567891", Name: "foo.com."}}, nil
+	return []cloudflare.Zone{{ID: "1234567890", Name: "ext-dns-test.zalando.to."}, {ID: "1234567891", Name: "foo.com."}, {ID: "1234567892", Name: "😡😡.ws."}}, nil
 }
 
 type mockCloudFlareUserDetailsFail struct{}
@@ -459,7 +462,7 @@ func TestApplyChanges(t *testing.T) {
 	changes.Create = []*endpoint.Endpoint{{DNSName: "new.ext-dns-test.zalando.to.", Targets: endpoint.Targets{"target"}}, {DNSName: "new.ext-dns-test.unrelated.to.", Targets: endpoint.Targets{"target"}}}
 	changes.Delete = []*endpoint.Endpoint{{DNSName: "foobar.ext-dns-test.zalando.to.", Targets: endpoint.Targets{"target"}}}
 	changes.UpdateOld = []*endpoint.Endpoint{{DNSName: "foobar.ext-dns-test.zalando.to.", Targets: endpoint.Targets{"target-old"}}}
-	changes.UpdateNew = []*endpoint.Endpoint{{DNSName: "foobar.ext-dns-test.zalando.to.", Targets: endpoint.Targets{"target-new"}}}
+	changes.UpdateNew = []*endpoint.Endpoint{{DNSName: "xn--c38ha.ws.", Targets: endpoint.Targets{"target-new"}}}
 	err := provider.ApplyChanges(changes)
 	if err != nil {
 		t.Errorf("should not fail, %s", err)

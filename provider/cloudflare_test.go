@@ -426,7 +426,7 @@ func TestRecords(t *testing.T) {
 		t.Errorf("should not fail, %s", err)
 	}
 
-	assert.Equal(t, 1, len(records))
+	assert.Equal(t, 2, len(records))
 	provider.Client = &mockCloudFlareDNSRecordsFail{}
 	_, err = provider.Records()
 	if err == nil {

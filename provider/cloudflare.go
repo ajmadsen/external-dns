@@ -169,6 +169,9 @@ func (p *CloudFlareProvider) Records() ([]*endpoint.Endpoint, error) {
 			if supportedRecordType(r.Type) {
 				// quick ascii update
 				r.ZoneName = zone.Name
+				if ascii, err := idna.ToASCII(r.Name); err == nil {
+					r.Name = ascii
+				}
 				endpoints = append(endpoints, endpoint.NewEndpointWithTTL(r.Name, r.Type, endpoint.TTL(r.TTL), r.Content))
 			}
 		}
@@ -207,6 +210,9 @@ func (p *CloudFlareProvider) submitChanges(changes []*cloudFlareChange) error {
 		for _, rec := range records {
 			if ascii, err := idna.ToASCII(rec.ZoneName); err == nil {
 				rec.ZoneName = ascii
+			}
+			if ascii, err := idna.ToASCII(rec.Name); err == nil {
+				rec.Name = ascii
 			}
 		}
 		if err != nil {

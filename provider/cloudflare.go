@@ -167,6 +167,8 @@ func (p *CloudFlareProvider) Records() ([]*endpoint.Endpoint, error) {
 
 		for _, r := range records {
 			if supportedRecordType(r.Type) {
+				// quick ascii update
+				r.ZoneName = zone.Name
 				endpoints = append(endpoints, endpoint.NewEndpointWithTTL(r.Name, r.Type, endpoint.TTL(r.TTL), r.Content))
 			}
 		}
@@ -202,6 +204,11 @@ func (p *CloudFlareProvider) submitChanges(changes []*cloudFlareChange) error {
 
 	for zoneID, changes := range changesByZone {
 		records, err := p.Client.DNSRecords(zoneID, cloudflare.DNSRecord{})
+		for _, rec := range records {
+			if ascii, err := idna.ToASCII(rec.ZoneName); err == nil {
+				rec.ZoneName = ascii
+			}
+		}
 		if err != nil {
 			return fmt.Errorf("could not fetch records from zone, %v", err)
 		}

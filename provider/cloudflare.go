@@ -22,10 +22,10 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/kubernetes-incubator/external-dns/endpoint"
 	"github.com/kubernetes-incubator/external-dns/plan"
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/idna"
 )
 
 const (
@@ -133,6 +133,10 @@ func (p *CloudFlareProvider) Zones() ([]cloudflare.Zone, error) {
 	}
 
 	for _, zone := range zones {
+		if ascii, err := idna.ToASCII(zone.Name); err == nil {
+			zone.Name = ascii
+		}
+
 		if !p.domainFilter.Match(zone.Name) {
 			continue
 		}

@@ -233,6 +233,12 @@ func (p *CloudFlareProvider) submitChanges(changes []*cloudFlareChange) error {
 				continue
 			}
 			recordID := p.getRecordID(records, change.ResourceRecordSet)
+			if uniconv, err := idna.ToUnicode(change.ResourceRecordSet.Name); err == nil {
+				change.ResourceRecordSet.Name = uniconv
+			}
+			if uniconv, err := idna.ToUnicode(change.ResourceRecordSet.ZoneName); err == nil {
+				change.ResourceRecordSet.ZoneName = uniconv
+			}
 			switch change.Action {
 			case cloudFlareCreate:
 				_, err := p.Client.CreateDNSRecord(zoneID, change.ResourceRecordSet)

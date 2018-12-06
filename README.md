@@ -39,6 +39,7 @@ ExternalDNS' current release is `v0.5`. This version allows you to keep selected
 * [Exoscale](https://www.exoscale.com/dns/)
 * [Oracle Cloud Infrastructure DNS](https://docs.cloud.oracle.com/iaas/Content/DNS/Concepts/dnszonemanagement.htm)
 * [Linode DNS](https://www.linode.com/docs/networking/dns/)
+* [RFC2136](https://tools.ietf.org/html/rfc2136)  
 
 From this release, ExternalDNS can become aware of the records it is managing (enabled via `--registry=txt`), therefore ExternalDNS can safely manage non-empty hosted zones. We strongly encourage you to use `v0.5` (or greater) with `--registry=txt` enabled and `--txt-owner-id` set to a unique value that doesn't change for the lifetime of your cluster. You might also want to run ExternalDNS in a dry run mode (`--dry-run` flag) to see the changes to be submitted to your DNS Provider API.
 
@@ -54,6 +55,7 @@ The following tutorials are provided:
 * [AWS (Route53)](docs/tutorials/aws.md)
 * [AWS (Service Discovery)](docs/tutorials/aws-sd.md)
 * [Azure](docs/tutorials/azure.md)
+* [CoreDNS](docs/tutorials/coredns.md)
 * [Cloudflare](docs/tutorials/cloudflare.md)
 * [DigitalOcean](docs/tutorials/digitalocean.md)
 * [Infoblox](docs/tutorials/infoblox.md)
@@ -64,6 +66,7 @@ The following tutorials are provided:
 * [Exoscale](docs/tutorials/exoscale.md)
 * [Oracle Cloud Infrastructure (OCI) DNS](docs/tutorials/oracle.md)
 * [Linode](docs/tutorials/linode.md)
+* [RFC2136](docs/tutorials/rfc2136.md)
 
 ## Running Locally
 
@@ -176,6 +179,7 @@ Here's a rough outline on what is to come (subject to change):
 - [x] Support for creating DNS records to multiple targets (for Google and AWS)
 - [x] Support for OpenStack Designate
 - [x] Support for PowerDNS
+- [x] Support for Linode
 
 ### v0.6
 
